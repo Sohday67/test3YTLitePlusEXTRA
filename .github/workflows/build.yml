@@ -80,7 +80,13 @@ jobs:
           echo "THEOS=${{ github.workspace }}/theos" >> $GITHUB_ENV
 
       - name: Clone Theos
-        run: git clone --quiet --depth=1 --recurse-submodules https://github.com/theos/theos.git
+        run: |
+          git clone --quiet --depth=1 --recurse-submodules https://github.com/theos/theos.git
+          # Pin Logos to the last good commit. Logos 777925d (#114, 2026-06-29) regressed
+          # %orig expansion when %orig is used as a sub-expression (e.g. %orig.mutableCopy
+          # or f(%orig, ...)), which breaks YouPiP and other tweaks.
+          git -C theos/vendor/logos fetch --quiet --depth=1 origin a62370066a97e36d59b200a9fa10c5091f5e8972
+          git -C theos/vendor/logos checkout --quiet a62370066a97e36d59b200a9fa10c5091f5e8972
 
       - name: Download iOS SDK
         run: |
